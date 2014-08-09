@@ -33,7 +33,9 @@ package net.doubledoordev.autoCrafter.nei;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.api.IOverlayHandler;
 import codechicken.nei.recipe.IRecipeHandler;
+import net.doubledoordev.autoCrafter.AutoCrafter2000;
 import net.doubledoordev.autoCrafter.guis.AutoCrafterGui;
+import net.doubledoordev.autoCrafter.network.NEIMessage;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -58,8 +60,7 @@ public class AutoCrafterOverlayHandler implements IOverlayHandler
             int y = (stack.rely - 6) / 18;
             root.setTag(String.valueOf((x + y * 3)), stack.item.writeToNBT(new NBTTagCompound()));
         }
-        //TODO: Packet crap: PacketDispatcher.sendPacketToServer(NetworkHelper.makeNBTPacket(CHANNEL_NEI, root));
-
+        AutoCrafter2000.getSnw().sendToServer(new NEIMessage(root));
         ((AutoCrafterGui) firstGui).inventorySlots.getSlot(0).putStack(recipe.getResultStack(recipeIndex).item);
     }
 }

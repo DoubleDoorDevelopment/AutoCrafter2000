@@ -28,35 +28,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package net.doubledoordev.autoCrafter.util;
+package net.doubledoordev.autoCrafter.network;
 
-import net.doubledoordev.lib.DevPerks;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-
-import java.io.File;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import io.netty.buffer.ByteBuf;
 
 /**
- * Config file
- * Contains ModID.
- *
- * @author Dries007
+ * This is a copy paste class :p
  */
-public class Config
+public class Message implements IMessage
 {
-    public boolean debug = false;
-    public int     craftDelay           = 10;
-    public boolean updateCraftCountLive = true;
-
-    public Config(File file)
+    @Override
+    public void fromBytes(ByteBuf buf)
     {
-        Configuration configuration = new Configuration(file);
 
-        updateCraftCountLive = configuration.get(Configuration.CATEGORY_GENERAL, "updateCraftCountLive", updateCraftCountLive, "Send a packet to all players in the GUI to update craft count.\nDisable if network speed is an issue.").getBoolean(updateCraftCountLive);
-        craftDelay = configuration.get(Configuration.CATEGORY_GENERAL, "craftDelay", craftDelay, "Amount of ticks in between each craft operation. 20 ticks is 1 second.\nLower values (< +-5) increase item duping when shift-clicking. I can't fix that.").getInt();
+    }
 
-        debug = configuration.getBoolean("debug", Configuration.CATEGORY_GENERAL, debug, "Allow right click on the block with a stick to debug + enable extra debug output.");
-        if (configuration.getBoolean("sillyness", Configuration.CATEGORY_GENERAL, true, "Disable sillyness only if you want to piss off the developers XD")) MinecraftForge.EVENT_BUS.register(new DevPerks(debug));
-        if (configuration.hasChanged()) configuration.save();
+    @Override
+    public void toBytes(ByteBuf buf)
+    {
+
+    }
+
+    public static class Handler implements IMessageHandler<Message, IMessage>
+    {
+        @Override
+        public IMessage onMessage(Message message, MessageContext ctx)
+        {
+            return null;
+        }
     }
 }

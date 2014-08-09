@@ -33,9 +33,11 @@ package net.doubledoordev.autoCrafter.buildcraft.triggers;
 import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.TriggerParameter;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.doubledoordev.autoCrafter.tile.AutoCrafterTile;
+import net.doubledoordev.autoCrafter.util.InventoryHelper;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -55,12 +57,23 @@ public class InventoryTrigger implements ITileTrigger
     @Override
     public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter)
     {
-        return tile instanceof AutoCrafterTile && isTriggerActive((AutoCrafterTile) tile);
+        return tile instanceof AutoCrafterTile && isTriggerActive((AutoCrafterTile) tile, parameter);
     }
 
     public enum State
     {
-        Empty, Full, Has_Items, Has_Space
+        Empty, Full, Has_Items, Has_Space;
+
+        public boolean hasParameter()
+        {
+            return this == State.Has_Space || this == State.Has_Items;
+        }
+
+        public ITriggerParameter createParameter()
+        {
+            if (this == State.Has_Space || this == State.Has_Items) return new TriggerParameter();
+            return null;
+        }
     }
 
     public enum InventoryType
@@ -84,24 +97,37 @@ public class InventoryTrigger implements ITileTrigger
         this.inventoryType = inventoryType;
     }
 
-    public boolean isTriggerActive(AutoCrafterTile tile)
+    public boolean isTriggerActive(AutoCrafterTile tile, ITriggerParameter parameter)
     {
         IInventory inventory = inventoryType.getRightInventory(tile);
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            if (tile.inventoryMatrix.getStackInSlot(i) == null) continue;
-
             ItemStack itemStack = inventory.getStackInSlot(i);
-            if (itemStack != null && state == State.Has_Items) return true;
-            if (itemStack == null && state == State.Full) return false;
-            if (itemStack == null && state == State.Has_Space) return true;
-            if (itemStack != null && state == State.Empty) return false;
-            if (itemStack != null && itemStack.stackSize != itemStack.getMaxStackSize() && state == State.Full) return false;
-            if (itemStack != null && itemStack.stackSize < itemStack.getMaxStackSize() && state == State.Has_Space) return true;
+            switch (state)
+            {
+                case Empty:
+                    if (itemStack != null) return false;
+                    break;
+                case Full:
+                    if (itemStack == null) return false;
+                    else if (itemStack.stackSize != itemStack.getMaxStackSize()) return false;
+                    break;
+                case Has_Items:
+                    if (itemStack != null) if (parameter == null || InventoryHelper.canStacksMerge(parameter.getItemStack(), itemStack, false)) return true;
+                    break;
+                case Has_Space:
+                    if (tile.inventoryMatrix.getStackInSlot(i) == null) continue;
+                    if (parameter == null)
+                    {
+                        if (itemStack == null || itemStack.stackSize < itemStack.getMaxStackSize()) return true;
+                    }
+                    else if (InventoryHelper.canStacksMerge(parameter.getItemStack(), itemStack, true)) if (itemStack == null || itemStack.stackSize < itemStack.getMaxStackSize()) return true;
+                    break;
+            }
         }
         switch (state)
         {
-            case Has_Items:
+            case Empty:
                 return true;
             default:
                 return false;
@@ -131,7 +157,7 @@ public class InventoryTrigger implements ITileTrigger
     @Override
     public boolean hasParameter()
     {
-        return false;
+        return state.hasParameter();
     }
 
     @Override
@@ -149,7 +175,7 @@ public class InventoryTrigger implements ITileTrigger
     @Override
     public ITriggerParameter createParameter()
     {
-        return null;
+        return state.createParameter();
     }
 
     @Override

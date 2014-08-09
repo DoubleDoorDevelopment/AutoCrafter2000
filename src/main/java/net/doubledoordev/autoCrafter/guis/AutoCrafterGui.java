@@ -30,7 +30,9 @@
 
 package net.doubledoordev.autoCrafter.guis;
 
+import net.doubledoordev.autoCrafter.AutoCrafter2000;
 import net.doubledoordev.autoCrafter.guis.parts.GuiButtonItemStack;
+import net.doubledoordev.autoCrafter.network.RedstoneModeMessage;
 import net.doubledoordev.autoCrafter.tile.AutoCrafterTile;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -82,7 +84,7 @@ public class AutoCrafterGui extends GuiContainer
             AutoCrafterTile tile = ((AutoCrafterContainer) this.inventorySlots).tile;
             redstonebutton.item = tile.redstoneMode = (tile.redstoneMode + 1) % 3;
 
-            // TODO packet crap: PacketDispatcher.sendPacketToServer(PacketDispatcher.getPacket(CHANNEL_RMU, Joiner.on(";").join(tile.xCoord, tile.yCoord, tile.zCoord, tile.redstoneMode).getBytes()));
+            AutoCrafter2000.getSnw().sendToServer(new RedstoneModeMessage(tile));
         }
     }
 

@@ -35,6 +35,8 @@ import buildcraft.api.gates.ITrigger;
 import cpw.mods.fml.common.Optional;
 import net.doubledoordev.autoCrafter.AutoCrafter2000;
 import net.doubledoordev.autoCrafter.buildcraft.BuildcraftHelper;
+import net.doubledoordev.autoCrafter.network.CounterMessage;
+import net.doubledoordev.autoCrafter.network.RedstoneModeMessage;
 import net.doubledoordev.autoCrafter.util.Constants;
 import net.doubledoordev.autoCrafter.util.InventoryHelper;
 import net.doubledoordev.autoCrafter.util.MultiInventory;
@@ -155,8 +157,8 @@ public class AutoCrafterTile extends TileEntity implements ISidedInventory, IOve
         {
             crafts++;
             result = result.copy(); // Won't be null cause then willCraft would have been false.
-            if (AutoCrafter2000.getConfig().updateCraftCountLive) for (EntityPlayer player : players) ;
-            // TODO: Packet crap    PacketDispatcher.sendPacketToPlayer(PacketDispatcher.getPacket(CHANNEL_RMU, Joiner.on(";").join(this.xCoord, this.yCoord, this.zCoord, this.redstoneMode, this.crafts).getBytes()), (cpw.mods.fml.common.network.Player) player);
+            if (AutoCrafter2000.getConfig().updateCraftCountLive) for (EntityPlayer player : players)
+                    AutoCrafter2000.getSnw().sendTo(new CounterMessage(this), (net.minecraft.entity.player.EntityPlayerMP) player);
 
             // Craft!
             craftSlot.onPickupFromSlot(internalPlayer, result);
@@ -197,7 +199,7 @@ public class AutoCrafterTile extends TileEntity implements ISidedInventory, IOve
 
         int id1 = OreDictionary.getOreID(stack1);
         int id2 = OreDictionary.getOreID(stack2);
-        return id1 != -1 && id1 == id2;
+        return id1 != -1 && id2 != -1 && id1 == id2;
     }
 
     private void shuffleArray(int[] ar)
@@ -235,12 +237,12 @@ public class AutoCrafterTile extends TileEntity implements ISidedInventory, IOve
                 if (i == j) continue; // Don't try to merge with yourself...
 
                 ItemStack otherStack = inventoryIn.getStackInSlot(j);
-                if (otherStack == null)
+                if (otherStack == null && canStacksMergeWithOreDict(craftStack, existingStack, false))
                 {
                     if (existingStack.stackSize == 1) continue; // Prevent derp
+                    debug("reBalanceSlot.FillEmptySlot: " + craftStack + ", " + existingStack);
                     inventoryIn.setInventorySlotContents(i, existingStack);
                     inventoryIn.setInventorySlotContents(j, existingStack.splitStack(1));
-                    debug("reBalanceSlot.FillEmptySlot");
                     return; // Do only 1 per tick
                 }
             }
@@ -348,7 +350,7 @@ public class AutoCrafterTile extends TileEntity implements ISidedInventory, IOve
 
     public boolean canInteractWith(EntityPlayer player)
     {
-        //Todo: packet crap: PacketDispatcher.sendPacketToPlayer(PacketDispatcher.getPacket(CHANNEL_RMU, Joiner.on(";").join(this.xCoord, this.yCoord, this.zCoord, this.redstoneMode, this.crafts).getBytes()), (cpw.mods.fml.common.network.Player) player);
+        AutoCrafter2000.getSnw().sendTo(new RedstoneModeMessage(this), (net.minecraft.entity.player.EntityPlayerMP) player);
         return true;
     }
 

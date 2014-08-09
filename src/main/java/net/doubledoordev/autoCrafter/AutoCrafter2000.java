@@ -36,10 +36,15 @@ import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
 import net.doubledoordev.autoCrafter.blocks.AutoCrafterBlock;
 import net.doubledoordev.autoCrafter.buildcraft.BuildcraftHelper;
 import net.doubledoordev.autoCrafter.nei.NEIHelper;
+import net.doubledoordev.autoCrafter.network.CounterMessage;
 import net.doubledoordev.autoCrafter.network.GuiHandler;
+import net.doubledoordev.autoCrafter.network.NEIMessage;
+import net.doubledoordev.autoCrafter.network.RedstoneModeMessage;
 import net.doubledoordev.autoCrafter.util.Config;
 import org.apache.logging.log4j.Logger;
 
@@ -61,8 +66,9 @@ public class AutoCrafter2000
     @Mod.Metadata(MODID)
     private ModMetadata metadata;
 
-    private Config config;
-    private Logger logger;
+    private SimpleNetworkWrapper snw;
+    private Config               config;
+    private Logger               logger;
 
     @Mod.EventHandler()
     public void event(FMLPreInitializationEvent event) throws IOException
@@ -72,6 +78,13 @@ public class AutoCrafter2000
         config = new Config(event.getSuggestedConfigurationFile());
 
         new AutoCrafterBlock();
+
+        int id = 0;
+        snw = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
+        snw.registerMessage(RedstoneModeMessage.Handler.class, RedstoneModeMessage.class, id++, Side.SERVER);
+        snw.registerMessage(RedstoneModeMessage.Handler.class, RedstoneModeMessage.class, id++, Side.CLIENT);
+        snw.registerMessage(NEIMessage.Handler.class, NEIMessage.class, id++, Side.SERVER);
+        snw.registerMessage(CounterMessage.Handler.class, CounterMessage.class, id++, Side.CLIENT);
     }
 
     @Mod.EventHandler()
@@ -95,5 +108,10 @@ public class AutoCrafter2000
     public static Logger getLogger()
     {
         return instance.logger;
+    }
+
+    public static SimpleNetworkWrapper getSnw()
+    {
+        return instance.snw;
     }
 }

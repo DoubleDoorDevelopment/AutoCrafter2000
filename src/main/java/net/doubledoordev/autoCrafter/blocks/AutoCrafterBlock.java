@@ -65,10 +65,10 @@ public class AutoCrafterBlock extends BlockContainer
     public AutoCrafterBlock()
     {
         super(Material.iron);
-        setHardness(5.0F).setResistance(10.0F).setStepSound(soundTypeMetal).setBlockName("autocrafter").setCreativeTab(CreativeTabs.tabMisc);
+        setHardness(5.0F).setResistance(10.0F).setStepSound(soundTypeMetal).setBlockName(Constants.MODID + ":autocrafter").setCreativeTab(CreativeTabs.tabMisc);
 
-        GameRegistry.registerBlock(this, "autocrafter");
-        GameRegistry.registerTileEntity(AutoCrafterTile.class, "autocraftertile");
+        GameRegistry.registerBlock(this, "AutoCrafter");
+        GameRegistry.registerTileEntity(AutoCrafterTile.class, "AutoCrafterTile");
         CraftingManager.getInstance().addRecipe(new ItemStack(this), " c ", "iwi", " t ", 'c', Blocks.chest, 'i', Items.iron_ingot, 'w', Blocks.crafting_table, 't', Blocks.redstone_torch);
 
         instance = this;
@@ -87,9 +87,9 @@ public class AutoCrafterBlock extends BlockContainer
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int side, float hitX, float hitY, float hitZ)
     {
         super.onBlockActivated(world, x, y, z, entityplayer, side, hitX, hitY, hitZ);
-        if (world.isRemote) return false;
+        if (world.isRemote) return true;
 
-        if (AutoCrafter2000.getConfig().allowDebug && entityplayer.getHeldItem() != null && entityplayer.getHeldItem().getItem() == Items.stick) ((AutoCrafterTile) world.getTileEntity(x, y, z)).debugTicks = 100;
+        if (AutoCrafter2000.getConfig().debug && entityplayer.getHeldItem() != null && entityplayer.getHeldItem().getItem() == Items.stick) ((AutoCrafterTile) world.getTileEntity(x, y, z)).debugTicks = 100;
         else entityplayer.openGui(AutoCrafter2000.instance, Constants.GuiID_AutoCrafter, world, x, y, z);
 
         return true;
