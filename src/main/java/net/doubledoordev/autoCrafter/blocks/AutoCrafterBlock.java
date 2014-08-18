@@ -36,6 +36,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.doubledoordev.autoCrafter.AutoCrafter2000;
 import net.doubledoordev.autoCrafter.tile.AutoCrafterTile;
 import net.doubledoordev.autoCrafter.util.Constants;
+import net.doubledoordev.d3core.D3Core;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -89,7 +90,7 @@ public class AutoCrafterBlock extends BlockContainer
         super.onBlockActivated(world, x, y, z, entityplayer, side, hitX, hitY, hitZ);
         if (world.isRemote) return true;
 
-        if (AutoCrafter2000.getConfig().debug && entityplayer.getHeldItem() != null && entityplayer.getHeldItem().getItem() == Items.stick) ((AutoCrafterTile) world.getTileEntity(x, y, z)).debugTicks = 100;
+        if (D3Core.debug() && entityplayer.getHeldItem() != null && entityplayer.getHeldItem().getItem() == Items.stick) ((AutoCrafterTile) world.getTileEntity(x, y, z)).debugTicks = 100;
         else entityplayer.openGui(AutoCrafter2000.instance, Constants.GuiID_AutoCrafter, world, x, y, z);
 
         return true;

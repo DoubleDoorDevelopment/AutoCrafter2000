@@ -1,1 +1,4 @@
 tile.AutoCrafter2000:autocrafter.name=AutoCrafter
+
+d3.autocrafter2000.config.autocrafter2000=AutoCrafter2000
+d3.autocrafter2000.config.autocrafter2000.tooltip=Settings for AutoCrafter2000

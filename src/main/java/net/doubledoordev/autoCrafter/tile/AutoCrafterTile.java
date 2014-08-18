@@ -129,7 +129,7 @@ public class AutoCrafterTile extends TileEntity implements ISidedInventory, IOve
         boolean willCraft = true;
         // Lower tick rate
         tick++;
-        if (AutoCrafter2000.getConfig().craftDelay != 0 && tick % AutoCrafter2000.getConfig().craftDelay != 0) willCraft = false;
+        if (AutoCrafter2000.instance.craftDelay != 0 && tick % AutoCrafter2000.instance.craftDelay != 0) willCraft = false;
         else tick = 0;
         debug("tickDelay", willCraft);
 
@@ -157,7 +157,7 @@ public class AutoCrafterTile extends TileEntity implements ISidedInventory, IOve
         {
             crafts++;
             result = result.copy(); // Won't be null cause then willCraft would have been false.
-            if (AutoCrafter2000.getConfig().updateCraftCountLive) for (EntityPlayer player : players)
+            if (AutoCrafter2000.instance.updateCraftCountLive) for (EntityPlayer player : players)
                     AutoCrafter2000.getSnw().sendTo(new CounterMessage(this), (net.minecraft.entity.player.EntityPlayerMP) player);
 
             // Craft!

@@ -30,9 +30,9 @@
 
 package net.doubledoordev.autoCrafter;
 
+import cpw.mods.fml.client.config.IConfigElement;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -45,10 +45,13 @@ import net.doubledoordev.autoCrafter.network.CounterMessage;
 import net.doubledoordev.autoCrafter.network.GuiHandler;
 import net.doubledoordev.autoCrafter.network.NEIMessage;
 import net.doubledoordev.autoCrafter.network.RedstoneModeMessage;
-import net.doubledoordev.autoCrafter.util.Config;
+import net.doubledoordev.d3core.util.ID3Mod;
+import net.minecraftforge.common.config.ConfigElement;
+import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.List;
 
 import static net.doubledoordev.autoCrafter.util.Constants.*;
 
@@ -57,25 +60,26 @@ import static net.doubledoordev.autoCrafter.util.Constants.*;
  *
  * @author Dries007
  */
-@Mod(modid = MODID, useMetadata = true)
-public class AutoCrafter2000
+@Mod(modid = MODID, canBeDeactivated = false)
+public class AutoCrafter2000 implements ID3Mod
 {
     @Mod.Instance(MODID)
     public static AutoCrafter2000 instance;
 
-    @Mod.Metadata(MODID)
-    private ModMetadata metadata;
-
     private SimpleNetworkWrapper snw;
-    private Config               config;
-    private Logger               logger;
+
+    public int     craftDelay           = 10;
+    public boolean updateCraftCountLive = true;
+    private Configuration configuration;
+    private Logger logger;
 
     @Mod.EventHandler()
     public void event(FMLPreInitializationEvent event) throws IOException
     {
         logger = event.getModLog();
 
-        config = new Config(event.getSuggestedConfigurationFile());
+        configuration = new Configuration(event.getSuggestedConfigurationFile());
+        syncConfig();
 
         new AutoCrafterBlock();
 
@@ -95,16 +99,6 @@ public class AutoCrafter2000
         if (Loader.isModLoaded(NEI_MODID)) NEIHelper.init();
     }
 
-    public static String getVersion()
-    {
-        return instance.metadata.version;
-    }
-
-    public static Config getConfig()
-    {
-        return instance.config;
-    }
-
     public static Logger getLogger()
     {
         return instance.logger;
@@ -113,5 +107,22 @@ public class AutoCrafter2000
     public static SimpleNetworkWrapper getSnw()
     {
         return instance.snw;
+    }
+
+    @Override
+    public void syncConfig()
+    {
+        configuration.setCategoryLanguageKey(MODID, "d3.autocrafter2000.config.autocrafter2000");
+
+        updateCraftCountLive = configuration.get(MODID, "updateCraftCountLive", updateCraftCountLive, "Send a packet to all players in the GUI to update craft count.\nDisable if network speed is an issue.").getBoolean(updateCraftCountLive);
+        craftDelay = configuration.get(MODID, "craftDelay", craftDelay, "Amount of ticks in between each craft operation. 20 ticks is 1 second.\nLower values (< +-5) increase item duping when shift-clicking. I can't fix that.").getInt();
+
+        if (configuration.hasChanged()) configuration.save();
+    }
+
+    @Override
+    public void addConfigElements(List<IConfigElement> configElements)
+    {
+        configElements.add(new ConfigElement(configuration.getCategory(MODID.toLowerCase())));
     }
 }
