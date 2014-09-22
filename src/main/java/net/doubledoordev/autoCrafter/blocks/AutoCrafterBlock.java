@@ -61,7 +61,7 @@ public class AutoCrafterBlock extends BlockContainer
 {
     public static AutoCrafterBlock instance;
     private final IIcon[]  icons      = new IIcon[6];
-    private final String[] icon_names = {"_bottom", "_top", "_side", "_side1", "_side2", "_side3"};
+    private final String[] icon_names = {"_bottom", "_top", "_side", "_side", "_side", "_side"};
 
     public AutoCrafterBlock()
     {
