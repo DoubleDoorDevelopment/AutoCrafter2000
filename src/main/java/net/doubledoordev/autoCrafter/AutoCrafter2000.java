@@ -39,7 +39,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import net.doubledoordev.autoCrafter.blocks.AutoCrafterBlock;
-import net.doubledoordev.autoCrafter.buildcraft.BuildcraftHelper;
 import net.doubledoordev.autoCrafter.nei.NEIHelper;
 import net.doubledoordev.autoCrafter.network.CounterMessage;
 import net.doubledoordev.autoCrafter.network.GuiHandler;
@@ -53,7 +52,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.List;
 
-import static net.doubledoordev.autoCrafter.util.Constants.*;
+import static net.doubledoordev.autoCrafter.util.Constants.MODID;
+import static net.doubledoordev.autoCrafter.util.Constants.NEI_MODID;
 
 /**
  * The main mod class
@@ -95,7 +95,6 @@ public class AutoCrafter2000 implements ID3Mod
     public void event(FMLInitializationEvent event)
     {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
-        if (Loader.isModLoaded(BC_MODID)) BuildcraftHelper.init();
         if (Loader.isModLoaded(NEI_MODID)) NEIHelper.init();
     }
 

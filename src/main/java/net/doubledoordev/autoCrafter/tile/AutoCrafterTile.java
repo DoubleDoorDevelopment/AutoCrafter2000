@@ -30,11 +30,7 @@
 
 package net.doubledoordev.autoCrafter.tile;
 
-import buildcraft.api.gates.IOverrideDefaultTriggers;
-import buildcraft.api.gates.ITrigger;
-import cpw.mods.fml.common.Optional;
 import net.doubledoordev.autoCrafter.AutoCrafter2000;
-import net.doubledoordev.autoCrafter.buildcraft.BuildcraftHelper;
 import net.doubledoordev.autoCrafter.network.CounterMessage;
 import net.doubledoordev.autoCrafter.network.RedstoneModeMessage;
 import net.doubledoordev.autoCrafter.util.Constants;
@@ -59,16 +55,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import static net.doubledoordev.autoCrafter.util.Constants.BC_MODID;
-
 /**
  * This is where the magic happens.
  * Thanks to Buildcraft for some handy code.
  *
  * @author Dries007
  */
-@Optional.Interface(iface = "buildcraft.api.gates.IOverrideDefaultTriggers", modid = BC_MODID)
-public class AutoCrafterTile extends TileEntity implements ISidedInventory, IOverrideDefaultTriggers
+public class AutoCrafterTile extends TileEntity implements ISidedInventory
 {
     // NBT data
     private static final String INV_RESULT = "result";
@@ -352,13 +345,6 @@ public class AutoCrafterTile extends TileEntity implements ISidedInventory, IOve
     {
         AutoCrafter2000.getSnw().sendTo(new RedstoneModeMessage(this), (net.minecraft.entity.player.EntityPlayerMP) player);
         return true;
-    }
-
-    @Optional.Method(modid = BC_MODID)
-    @Override
-    public LinkedList<ITrigger> getTriggers()
-    {
-        return BuildcraftHelper.getAutocrafterTriggers();
     }
 
     public void dropAll()

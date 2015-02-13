@@ -16,8 +16,6 @@ buildscript {
     }
 }
 
-import groovy.json.*
-
 configurations {
     compile
     deployJars
@@ -56,7 +54,6 @@ repositories {
 dependencies {
     compile "net.doubledoordev.d3core:D3Core:" + project.minecraft.version + "-+:dev"
     compile "codechicken:NotEnoughItems:1.7.10-1+:dev"
-    compile "com.mod-buildcraft:buildcraft:6+:dev"
 }
 
 if (System.getenv().BUILD_NUMBER != null) version += "." + System.getenv().BUILD_NUMBER

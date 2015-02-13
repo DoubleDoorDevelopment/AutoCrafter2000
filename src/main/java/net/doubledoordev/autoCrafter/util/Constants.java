@@ -46,6 +46,5 @@ public class Constants
 
     public static final GameProfile GAME_PROFILE = new GameProfile(UUID.nameUUIDFromBytes(MODID.getBytes()), "[" + MODID + "]");
 
-    public static final String BC_MODID  = "BuildCraft|Core";
     public static final String NEI_MODID = "NotEnoughItems";
 }
