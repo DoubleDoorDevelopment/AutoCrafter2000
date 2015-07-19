@@ -1,0 +1,4 @@
+tile.AutoCrafter2000:autocrafter.name=自动合成台
+
+d3.autocrafter2000.config.autocrafter2000=自动合成台2000
+d3.autocrafter2000.config.autocrafter2000.tooltip=为自动合成台2000进行设置
